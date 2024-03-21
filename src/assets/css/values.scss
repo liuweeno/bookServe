@@ -1,0 +1,16 @@
+// variable
+$device-color-busy: #52c41a;
+$device-color-online: #1a96c4;
+$device-color-offline: #949494;
+
+// @mixin
+@mixin flex-mode($direction: row, $justify: center, $align: center) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin br($color: red) {
+  border: 1px solid $color;
+}

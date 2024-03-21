@@ -1,0 +1,27 @@
+.placeholder-class {
+  font-size: 34rpx;
+  font-family: PingFangSC, PingFang SC;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.35);
+  line-height: 48rpx;
+}
+
+.popup-wrapper {
+  .u-safe-area-inset-bottom {
+    padding-bottom: 0;
+  }
+}
+
+.scroll-view {
+  height: 100%;
+}
+
+.common-page-container {
+  @include flex-mode(column, center, stretch);
+  height: 100vh;
+
+  &__content {
+    flex: 1;
+    overflow: auto;
+  }
+}
