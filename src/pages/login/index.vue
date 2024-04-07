@@ -17,7 +17,7 @@ function clickPhoneLogin() {
   <view class="login-index">
     <NavigationBar :showArrow="false" title="牙e维修在线平台" :border="false"></NavigationBar>
     <div class="login-index-content">
-      <div class="content"><image src="@/assets/img/login/logo.png" alt="" /><text>赋能未来 · 重塑算力生态</text></div>
+      <div class="content"><image src="@/assets/img/login/logo.png" alt="" /><text>微笑 · 无忧维修</text></div>
       <button class="btn-quick btn-content" open-type="getPhoneNumber" @getphonenumber="clickQuickLogin">
         本机快速登录
       </button>
@@ -31,6 +31,7 @@ function clickPhoneLogin() {
 
 <style scoped lang="scss">
 .btn-content {
+  width: 70%;
   font-size: 17px;
   font-family:
     PingFangSC,
@@ -72,7 +73,7 @@ function clickPhoneLogin() {
     }
 
     .btn-quick {
-      width: 327px;
+      width: 227px;
       height: 48px;
       background: #793aea;
       border-radius: 4px;

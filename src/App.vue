@@ -12,4 +12,7 @@ onHide(() => {
 </script>
 <style lang="scss">
 @import 'uview-plus/index.scss';
+@import '@/assets/css/reset.scss';
+@import '@/assets/css/iconfont.css';
+@import '@/assets/css/common.scss';
 </style>

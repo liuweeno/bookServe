@@ -1,43 +1,13 @@
 <template>
-  <view class="content">
-    <image class="logo" src="/static/logo.png" />
-    <view class="text-area">
-      <text class="title">{{ title }}!</text>
-      <u-tag text="标签" plain size="mini" type="warning">Good Job</u-tag>
-      {{ title }}
-    </view>
-  </view>
+  <u-swiper :list="list1" @change="change" @click="click"></u-swiper>
 </template>
+<script setup>
+import { reactive } from 'vue';
 
-<script setup lang="ts">
-import { ref } from 'vue';
-const title = ref('Hello');
+// 使用 reactive 创建响应式数组
+const list1 = reactive([
+  'https://cdn.uviewui.com/uview/swiper/swiper1.png',
+  'https://cdn.uviewui.com/uview/swiper/swiper2.png',
+  'https://cdn.uviewui.com/uview/swiper/swiper3.png',
+]);
 </script>
-
-<style>
-.content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo {
-  height: 200rpx;
-  width: 200rpx;
-  margin-top: 200rpx;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 50rpx;
-}
-
-.text-area {
-  display: flex;
-  justify-content: center;
-}
-
-.title {
-  font-size: 36rpx;
-  color: #8f8f94;
-}
-</style>
