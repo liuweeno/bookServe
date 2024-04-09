@@ -1,44 +1,3 @@
-<script setup lang="ts">
-import NavigationBar from '@/components/NavigationBar.vue';
-import { ref } from 'vue';
-
-const showSex = ref(false);
-const orderForm = ref({
-  userInfo: {
-    name: '',
-    sex: '',
-    phone: '',
-    address: '',
-  },
-});
-const showTimePicker = ref<boolean>(false);
-const timeValue = ref(Date.now());
-
-const actions = [
-  {
-    name: '男',
-  },
-  {
-    name: '女',
-  },
-];
-
-function sexSelect(e: any) {
-  orderForm.value.userInfo.sex = e.name;
-  // visitForm.validateField('userInfo.sex');
-}
-
-function confirmMonth(e: { value: string }) {
-  timeValue.value = e.value;
-  closePicker();
-  console.log(e.value);
-}
-
-function closePicker() {
-  showTimePicker.value = false;
-}
-</script>
-
 <template>
   <view class="visit-index">
     <NavigationBar :showArrow="false" title="上门维修" :border="false" background="white"></NavigationBar>
@@ -120,6 +79,47 @@ function closePicker() {
   </view>
 </template>
 
+<script setup lang="ts">
+import NavigationBar from '@/components/NavigationBar.vue';
+import { ref } from 'vue';
+
+const showSex = ref(false);
+const orderForm = ref({
+  userInfo: {
+    name: '',
+    sex: '',
+    phone: '',
+    address: '',
+  },
+});
+const showTimePicker = ref<boolean>(false);
+const timeValue = ref(Date.now());
+
+const actions = [
+  {
+    name: '男',
+  },
+  {
+    name: '女',
+  },
+];
+
+function sexSelect(e: any) {
+  orderForm.value.userInfo.sex = e.name;
+  // visitForm.validateField('userInfo.sex');
+}
+
+function confirmMonth(e: { value: string }) {
+  timeValue.value = e.value;
+  closePicker();
+  console.log(e.value);
+}
+
+function closePicker() {
+  showTimePicker.value = false;
+}
+</script>
+
 <style scoped lang="scss">
 .visit-index {
   height: 100vh;
@@ -167,21 +167,32 @@ function closePicker() {
       }
 
       .confirm-btn-container {
+        border-top: 1px solid #f2f2f5;
         width: 100%;
         position: absolute;
         bottom: 0;
-        height: 65px;
+        left: 0;
+        height: 55px;
         @include flex-mode(row, space-between);
-        @include br;
 
         .showPrice {
+          padding-left: 8px;
           height: 100%;
+          @include flex-mode();
+
+          > span {
+            margin-left: 3px;
+            color: #713de1;
+            font-size: x-large;
+            font-weight: bold;
+          }
         }
 
         .confirm-btn {
-          width: 50px;
+          padding: 0 28px;
+          white-space: nowrap;
           height: 100%;
-          background-color: #ec663e;
+          background-color: #713de1;
           color: white;
           @include flex-mode;
         }

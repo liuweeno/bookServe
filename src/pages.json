@@ -8,6 +8,13 @@
 	},
 	"pages": [
 		{
+			"path": "pages/user/allOrder",
+			"style": {
+				"navigationBarTitleText": "uni-app",
+				"navigationStyle": "custom"
+			}
+		},
+		{
 			"path": "pages/personalCenter/index",
 			"style": {
 				"navigationBarTitleText": "uni-app",

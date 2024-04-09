@@ -21,7 +21,7 @@
     <view class="grid-item">
       <u-grid :border="true" @click="click" col="2">
         <u-grid-item v-for="(baseListItem, baseListIndex) in baseList" :key="baseListIndex">
-          <img src="https://cdn.uviewui.com/uview/swiper/swiper1.png" alt="" />
+          <img src="" alt="" />
           <text class="grid-text">{{ baseListItem.title }}</text>
         </u-grid-item>
       </u-grid>
