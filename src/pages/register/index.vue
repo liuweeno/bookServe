@@ -1,20 +1,17 @@
 <template>
   <view class="main-container">
-    <NavigationBar title="手机号登录" />
+    <NavigationBar title="用户注册" />
     <div class="slogan-container">
       <image src="@/assets/img/login/logo.png" class="image" />
       <text class="slogan">微笑 · 无忧维修</text>
     </div>
     <view class="control-container">
-      <view class="login-way">
-        <text class="checked-way" @click="clickChangeWay('pw-login')">密码登录</text>
-      </view>
       <up-input
         border="bottom"
         type="number"
         placeholderClass="placeholder-class"
         placeholder="请输入手机号"
-        v-model="phoneNumber"
+        v-model="newUserForm.phone"
         fontSize="34rpx"
       >
         <template #prefix>
@@ -23,12 +20,11 @@
       </up-input>
       <up-input
         border="bottom"
-        v-if="wayChoose === 'pw-login'"
         type="text"
         password
         placeholderClass="placeholder-class"
         placeholder="请输入你的密码"
-        v-model="passwordAndCode"
+        v-model="newUserForm.password"
         fontSize="34rpx"
       >
         <template #prefix>
@@ -37,33 +33,51 @@
       </up-input>
       <up-input
         border="bottom"
-        v-else
         type="number"
         placeholderClass="placeholder-class"
-        placeholder="请输入验证码"
-        v-model="passwordAndCode"
+        placeholder="请输入姓名"
+        v-model="newUserForm.username"
         fontSize="34rpx"
       >
         <template #prefix>
-          <image class="prefix-image" src="@/assets/img/login/code-icon.png"></image>
-        </template>
-        <template #suffix>
-          <view class="send-code">
-            <text class="font" v-if="canSendCode" @click="clickSentCode">发送验证码</text>
-            <text v-else class="sent-code">{{ seconds }}</text>
-          </view>
+          <image class="prefix-image" src="@/assets/img/register/name.png"></image>
         </template>
       </up-input>
+      <div class="choose-container">
+        <image class="prefix-image" src="@/assets/img/register/sex.png"></image>
+        <up-radio-group v-model="newUserForm.sex" placement="row">
+          <up-radio
+            :customStyle="{ marginBottom: '8px' }"
+            v-for="(item, index) in sexList"
+            :key="index"
+            :label="item.name"
+            :name="item.name"
+          >
+          </up-radio>
+        </up-radio-group>
+      </div>
+      <div class="choose-container">
+        <image class="prefix-image" src="@/assets/img/register/role.png"></image>
+        <up-radio-group v-model="newUserForm.status" placement="row">
+          <up-radio
+            :customStyle="{ marginBottom: '8px' }"
+            v-for="(item, index) in roleList"
+            :key="index"
+            :label="item.name"
+            :name="item.name"
+          >
+          </up-radio>
+        </up-radio-group>
+      </div>
       <button
         class="certain-button"
         :class="{ 'certain-button-ready': phoneNumber && passwordAndCode }"
         @click="clickLogin"
       >
-        登录
+        注册
       </button>
     </view>
-    <Agreement v-model:checked="checked" />
-    <BothAgreement v-model:show="showBothAgreement" @agree="bothAgreement"></BothAgreement>
+
     <div class="background-yellow"></div>
     <div class="background-purple"></div>
   </view>
@@ -78,6 +92,21 @@ import { login } from '@/api/user.ts';
 
 const wayChoose = ref<string>('code-login');
 const phoneNumber = ref<string>('');
+const newUserForm = ref<{
+  username: string;
+  password: string;
+  phone: string;
+  sex: number;
+  status: number;
+  profile: string;
+}>({
+  username: '',
+  password: '',
+  phone: '',
+  sex: 0,
+  status: 0,
+  profile: '',
+});
 const passwordAndCode = ref<string>('');
 // const phoneNumber = ref<string>('13187098660');
 // const passwordAndCode = ref<string>('qq222222');
@@ -86,6 +115,8 @@ const canSendCode = ref<boolean>(true);
 const seconds = ref<number>(60);
 const showBothAgreement = ref<boolean>(false);
 
+const sexList = [{ name: '男' }, { name: '女' }];
+const roleList = [{ name: '用户' }, { name: '店员' }];
 interface Body {
   phone: string;
   way?: string;
@@ -118,13 +149,14 @@ function bothAgreement() {
 
 <style scoped lang="scss">
 .main-container {
+  @include br;
   width: 100vw;
   height: 100vh;
   position: relative;
   @include flex-mode(column, flex-start);
 
   .slogan-container {
-    flex: 1;
+    margin: 80rpx;
     @include flex-mode(column, center, center);
 
     .image {
@@ -152,7 +184,7 @@ function bothAgreement() {
   .control-container {
     height: 496rpx;
     box-sizing: border-box;
-    padding: 0 80rpx;
+    padding: 80rpx 80rpx;
     .login-way {
       width: 604rpx;
       height: 66rpx;
@@ -210,7 +242,7 @@ function bothAgreement() {
     }
 
     :deep(.u-input) {
-      margin-top: 48rpx;
+      margin-top: 28rpx;
       font-size: 34rpx;
       font-family:
         PingFangSC-Medium,
@@ -271,6 +303,18 @@ function bothAgreement() {
     .certain-button-ready {
       background: #793aea;
       opacity: 1;
+    }
+
+    .choose-container {
+      height: 60px;
+      border-bottom: 1rpx solid #e5e5e5;
+      @include flex-mode(row, flex-start);
+      .prefix-image {
+        width: 40rpx;
+        height: 40rpx;
+        margin-left: 15rpx;
+        margin-right: 9rpx;
+      }
     }
   }
 

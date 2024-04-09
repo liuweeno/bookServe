@@ -8,3 +8,5 @@ declare module '*.vue' {
 }
 
 declare module 'uview-plus';
+
+declare const wx: any;

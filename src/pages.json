@@ -8,6 +8,27 @@
 	},
 	"pages": [
 		{
+			"path": "pages/register/index",
+			"style": {
+				"navigationBarTitleText": "uni-app",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/detail/visit",
+			"style": {
+				"navigationBarTitleText": "uni-app",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/detail/mail",
+			"style": {
+				"navigationBarTitleText": "uni-app",
+				"navigationStyle": "custom"
+			}
+		},
+		{
 			"path": "pages/user/allOrder",
 			"style": {
 				"navigationBarTitleText": "uni-app",
