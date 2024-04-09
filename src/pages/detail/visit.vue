@@ -1,74 +1,61 @@
 <template>
   <view class="visit-index">
     <NavigationBar :showArrow="false" title="上门维修订单详情" :border="false" background="white"></NavigationBar>
-    <view class="visit">
-      <div class="tips">
-        <span class="big-one">已安排工程师上门</span><span class="small-one">已经安排工程师上门，请保持电话畅通</span>
-      </div>
-      <div class="tips second-tips">
-        <span class="big-one second-big">注意事项</span>
-        <span class="small-one">1. 如需更改上门维修时间，请提前联系</span>
-      </div>
-      <view class="form">
-        <u-form ref="visitForm" :model="orderForm" style="width: 100%">
-          <u-form-item
-            style="width: 100%"
-            label="姓名: "
-            :borderBottom="true"
-            prop="userInfo.name"
-            borderBottom
-            ref="item1"
-          >
-            <u--input v-model="orderForm.userInfo.name" border="none"></u--input>
-          </u-form-item>
-          <u-form-item
-            label="性别"
-            :borderBottom="true"
-            prop="userInfo.sex"
-            borderBottom
-            @click="showSex = true"
-            ref="item1"
-          >
-            <u--input
-              v-model="orderForm.userInfo.sex"
-              disabled
-              disabledColor="#ffffff"
-              placeholder="请选择性别"
-              border="none"
-            ></u--input>
-            <template #right>
-              <u-icon name="arrow-right"></u-icon>
-            </template>
-          </u-form-item>
-          <u-form-item label="手机: " :borderBottom="true" prop="userInfo.phone" borderBottom ref="item1">
-            <u--input v-model="orderForm.userInfo.phone" border="none"></u--input>
-          </u-form-item>
-          <u-form-item label="地址: " :borderBottom="true">
-            <u--textarea v-model="orderForm.userInfo.address" placeholder="请输入地址" count></u--textarea>
-          </u-form-item>
-          <u-form-item
-            label="上门时间"
-            borderBottom
-            @click="showTimePicker = true"
-            @confirm="confirmMonth"
-            @cancel="closePicker"
-          >
-            <template #right> <u-icon name="arrow-right"></u-icon> </template
-          ></u-form-item>
-        </u-form>
+    <div class="tips">
+      <span class="big-one">已安排工程师上门</span><span class="small-one">已经安排工程师上门，请保持电话畅通</span>
+    </div>
+    <div class="tips second-tips">
+      <span class="big-one second-big">注意事项</span>
+      <span class="small-one">1. 如需更改上门维修时间，请提前联系</span>
+    </div>
+    <view class="form">
+      <u-form ref="visitForm" :model="orderForm" style="width: 100%">
+        <u-form-item
+          style="width: 100%"
+          label="姓名: "
+          :borderBottom="true"
+          prop="userInfo.name"
+          borderBottom
+          ref="item1"
+        >
+          <u--input disabled v-model="orderForm.userInfo.name" border="none"></u--input>
+        </u-form-item>
+        <u-form-item
+          label="性别"
+          :borderBottom="true"
+          prop="userInfo.sex"
+          borderBottom
+          @click="showSex = true"
+          ref="item1"
+        >
+          <u--input disabled v-model="orderForm.userInfo.phone" border="none"></u--input>
+        </u-form-item>
+        <u-form-item label="手机: " :borderBottom="true" prop="userInfo.phone" borderBottom ref="item1">
+          <u--input disabled v-model="orderForm.userInfo.phone" border="none"></u--input>
+        </u-form-item>
+        <u-form-item label="地址: " :borderBottom="true">
+          <u--input disabled v-model="orderForm.userInfo.phone" border="none"></u--input>
+        </u-form-item>
+        <u-form-item label="上门时间:" borderBottom>
+          <u--input disabled v-model="orderForm.userInfo.phone" border="none"></u--input>
+        </u-form-item>
+      </u-form>
 
-        <div class="commodity-detail">
-          <img src="@/assets/img/login/is-check.png" alt="" />
-          <div>
-            <div>商品名称</div>
-            <div style="color: #a4a4a4; font-size: small">详细介绍/详细介绍/详细介绍/详细介绍/详细介绍</div>
-          </div>
+      <div class="commodity-detail">
+        <img src="@/assets/img/login/is-check.png" alt="" />
+        <div>
+          <div>商品名称</div>
+          <div style="color: #a4a4a4; font-size: small">详细介绍/详细介绍/详细介绍/详细介绍/详细介绍</div>
         </div>
-        <div class="confirm-btn-container">
-          <div class="showPrice">预估费用 <span>¥89.00</span></div>
-          <div class="confirm-btn">提交下单</div>
-        </div>
-      </view>
+      </div>
+      <div class="showTime">
+        <div class="item"><span class="title">订单编号： </span><span class="content">J1231312321312</span></div>
+        <div class="item"><span class="title">下单时间： </span><span class="content">2024-04-08 02:23:32</span></div>
+      </div>
+      <div class="confirm-btn-container">
+        <div class="showPrice">预估费用 <span>¥89.00</span></div>
+        <div class="confirm-btn">确认维修完成</div>
+      </div>
     </view>
   </view>
 </template>
@@ -103,12 +90,6 @@ function sexSelect(e: any) {
   // visitForm.validateField('userInfo.sex');
 }
 
-function confirmMonth(e: { value: string }) {
-  timeValue.value = e.value;
-  closePicker();
-  console.log(e.value);
-}
-
 function closePicker() {
   showTimePicker.value = false;
 }
@@ -122,94 +103,105 @@ function closePicker() {
   @include flex-mode(column, flex-start);
   background-color: #f2f2f5;
 
-  .visit {
-    @include br;
+  .tips {
+    height: 80px;
+    padding: 20px;
     width: 100%;
+    background-color: #6a40d9;
+    color: white;
+    @include flex-mode(column, flex-start, flex-start);
+    gap: 2px;
 
-    .tips {
+    .big-one {
+      font-weight: bold;
+      font-size: large;
+    }
+
+    .small-one {
+      font-size: small;
+    }
+  }
+
+  .second-tips {
+    height: 70px;
+    background-color: #a894ea;
+    color: black;
+
+    .second-big {
+      font-size: small;
+    }
+  }
+
+  .form {
+    position: relative;
+    padding: 15px;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: white;
+    @include flex-mode(column, flex-start, flex-start);
+
+    .commodity-detail {
+      height: 125px;
+      width: 100%;
+      border-top: solid #f2f2f5 24px;
+      border-bottom: 1px #e7e7e8 solid;
+      @include flex-mode(row, flex-start);
+
+      > img {
+        margin-right: 8px;
+        width: 50px;
+        height: 50px;
+      }
+    }
+
+    .showTime {
+      border-bottom: 1px #e7e7e8 solid;
       height: 80px;
-      padding: 20px;
       width: 100%;
-      background-color: #6a40d9;
-      color: white;
-      @include flex-mode(column, flex-start, flex-start);
+      @include flex-mode(column);
       gap: 2px;
+      font-size: small;
+      .item {
+        width: 100%;
 
-      .big-one {
-        font-weight: bold;
-        font-size: large;
-      }
-
-      .small-one {
-        font-size: small;
-      }
-    }
-
-    .second-tips {
-      height: 70px;
-      background-color: #a894ea;
-      color: black;
-
-      .second-big {
-        font-size: small;
+        .title {
+          color: #999999;
+        }
       }
     }
 
-    .form {
-      position: relative;
-      padding: 15px;
-      border: 1px solid #e5e5e5;
-      border-radius: 10px;
+    .confirm-btn-container {
+      border-top: 1px solid #f2f2f5;
       width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: white;
-      @include flex-mode(column, flex-start, flex-start);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 55px;
+      @include flex-mode(row, space-between);
 
-      .commodity-detail {
-        height: 125px;
-        width: 100%;
-        border-top: solid #f2f2f5 24px;
-        border-bottom: 1px #e7e7e8 solid;
-        @include flex-mode(row, flex-start);
+      .showPrice {
+        padding-left: 8px;
+        height: 100%;
+        @include flex-mode();
 
-        > img {
-          margin-right: 8px;
-          width: 50px;
-          height: 50px;
+        > span {
+          margin-left: 3px;
+          color: #713de1;
+          font-size: x-large;
+          font-weight: bold;
         }
       }
 
-      .confirm-btn-container {
-        border-top: 1px solid #f2f2f5;
-        width: 100%;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        height: 55px;
-        @include flex-mode(row, space-between);
-
-        .showPrice {
-          padding-left: 8px;
-          height: 100%;
-          @include flex-mode();
-
-          > span {
-            margin-left: 3px;
-            color: #713de1;
-            font-size: x-large;
-            font-weight: bold;
-          }
-        }
-
-        .confirm-btn {
-          padding: 0 28px;
-          white-space: nowrap;
-          height: 100%;
-          background-color: #713de1;
-          color: white;
-          @include flex-mode;
-        }
+      .confirm-btn {
+        padding: 0 28px;
+        white-space: nowrap;
+        height: 100%;
+        background-color: #713de1;
+        color: white;
+        @include flex-mode;
       }
     }
   }
