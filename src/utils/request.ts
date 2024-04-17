@@ -104,7 +104,7 @@ $http.beforeRequest = function (req: Request) {
   // 登录凭证
   if (req.url !== '/login') {
     const token = uni.getStorageSync('token');
-    token && (req.header.Authorization = `Bearer ${token}`);
+    token && (req.header.token = `${token}`);
   }
 };
 

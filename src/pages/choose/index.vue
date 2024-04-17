@@ -1,12 +1,20 @@
 <script setup lang="ts">
 import NavigationBar from '@/components/NavigationBar.vue';
+import { onMounted, ref } from 'vue';
+
+const id = ref(0);
 
 function goToMail() {
-  uni.navigateTo({ url: '/pages/mail/index' });
+  uni.navigateTo({ url: `/pages/mail/index?id=${id}` });
 }
 function goToVisit() {
-  uni.navigateTo({ url: '/pages/visit/index' });
+  uni.navigateTo({ url: `/pages/visit/index?id=${id}` });
 }
+
+onMounted(() => {
+  let { getId } = (getCurrentPages()[1] as any).options;
+  id.value = getId;
+});
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 <template>
   <view class="visit-index">
-    <NavigationBar :showArrow="false" title="上门维修" :border="false" background="white"></NavigationBar>
+    <NavigationBar :showArrow="true" title="上门维修" :border="false" background="white"></NavigationBar>
     <view class="visit">
       <view class="form">
         <div class="tips">提前确认预约时间，确保双方时间充裕。详细描述问题，让维修人员带齐所需工具和备件。</div>

@@ -118,7 +118,7 @@
 				"text": "维修日历"
 			},
 			{
-				"pagePath": "pages/user/index",
+				"pagePath": "pages/personalCenter/index",
 				"iconPath": "./static/img/user.png",
 				"selectedIconPath": "./static/img/userSelected.png",
 				"text": "个人中心"

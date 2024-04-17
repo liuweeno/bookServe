@@ -1,6 +1,6 @@
 <template>
   <view class="visit-index">
-    <NavigationBar :showArrow="false" title="上门维修订单详情" :border="false" background="white"></NavigationBar>
+    <NavigationBar :showArrow="true" title="上门维修订单详情" :border="false" background="white"></NavigationBar>
     <div class="tips">
       <span class="big-one">已安排工程师上门</span><span class="small-one">已经安排工程师上门，请保持电话畅通</span>
     </div>

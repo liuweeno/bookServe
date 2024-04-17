@@ -5,6 +5,7 @@
       <image src="@/assets/img/login/logo.png" class="image" />
       <text class="slogan">微笑 · 无忧维修</text>
     </div>
+    {{ newUserForm }}
     <view class="control-container">
       <up-input
         border="bottom"
@@ -33,7 +34,7 @@
       </up-input>
       <up-input
         border="bottom"
-        type="number"
+        type="string"
         placeholderClass="placeholder-class"
         placeholder="请输入姓名"
         v-model="newUserForm.username"
@@ -58,24 +59,18 @@
       </div>
       <div class="choose-container">
         <image class="prefix-image" src="@/assets/img/register/role.png"></image>
-        <up-radio-group v-model="newUserForm.status" placement="row">
+        <up-radio-group v-model="newUserForm.role" placement="row">
           <up-radio
             :customStyle="{ marginBottom: '8px' }"
             v-for="(item, index) in roleList"
             :key="index"
             :label="item.name"
-            :name="item.name"
+            :name="item.value"
           >
           </up-radio>
         </up-radio-group>
       </div>
-      <button
-        class="certain-button"
-        :class="{ 'certain-button-ready': phoneNumber && passwordAndCode }"
-        @click="clickLogin"
-      >
-        注册
-      </button>
+      <button class="certain-button certain-button-ready" @click="clickRegister">注册</button>
     </view>
 
     <div class="background-yellow"></div>
@@ -88,7 +83,7 @@ import NavigationBar from '@/components/NavigationBar.vue';
 import Agreement from '@/components/Agreement.vue';
 import { ref } from 'vue';
 import BothAgreement from '@/components/BothAgreement.vue';
-import { login } from '@/api/user.ts';
+import { register } from '@/api/user';
 
 const wayChoose = ref<string>('code-login');
 const phoneNumber = ref<string>('');
@@ -96,16 +91,16 @@ const newUserForm = ref<{
   username: string;
   password: string;
   phone: string;
-  sex: number;
-  status: number;
+  sex: string;
+  role: number;
   profile: string;
 }>({
   username: '',
   password: '',
   phone: '',
-  sex: 0,
-  status: 0,
-  profile: '',
+  sex: '男',
+  role: 1,
+  profile: '123123',
 });
 const passwordAndCode = ref<string>('');
 // const phoneNumber = ref<string>('13187098660');
@@ -115,8 +110,14 @@ const canSendCode = ref<boolean>(true);
 const seconds = ref<number>(60);
 const showBothAgreement = ref<boolean>(false);
 
-const sexList = [{ name: '男' }, { name: '女' }];
-const roleList = [{ name: '用户' }, { name: '店员' }];
+const sexList = [
+  { name: '男', value: 0 },
+  { name: '女', value: 1 },
+];
+const roleList = [
+  { name: '用户', value: 1 },
+  { name: '店员', value: 2 },
+];
 interface Body {
   phone: string;
   way?: string;
@@ -131,25 +132,33 @@ function clickChangeWay(way: string) {
 
 async function clickSentCode() {}
 
-async function clickLogin() {
-  const res = await login({
-    phone: phoneNumber.value,
-    way: wayChoose.value,
-    pwd: passwordAndCode.value,
-    app_type: 'repair',
-  });
+async function clickRegister() {
+  const res = await register(newUserForm.value);
+  if (res.code === 200) {
+    uni.showToast({
+      title: '注册成功',
+      icon: 'success',
+      duration: 2000,
+    });
+    uni.navigateBack();
+  } else {
+    uni.showToast({
+      title: res.msg,
+      icon: 'none',
+      duration: 2000,
+    });
+  }
 }
 
 function bothAgreement() {
   console.log('bothAgreement');
   checked.value = true;
-  clickLogin();
+  clickRegister();
 }
 </script>
 
 <style scoped lang="scss">
 .main-container {
-  @include br;
   width: 100vw;
   height: 100vh;
   position: relative;

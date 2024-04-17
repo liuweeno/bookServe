@@ -1,7 +1,7 @@
 <template>
   <view>
     <NavigationBar :showArrow="false" title="维修日历" :border="false" background="white"></NavigationBar>
-    <up-calendar :show="show"></up-calendar>
+    <up-calendar :show="show" :closeOnClickOverlay="true"></up-calendar>
     <up-button @click="show = true">打开</up-button>
   </view>
 </template>

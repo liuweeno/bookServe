@@ -2,14 +2,19 @@
   <view class="all-order-container">
     <NavigationBar :showArrow="true" title="所有订单页面" :border="true" background="white"></NavigationBar>
     <div class="home-index-container">
-      <u-skeleton rows="10" :loading="loading" :animate="true" v-if="deviceList.length !== 0">
+      <u-skeleton rows="10" :loading="loading" :animate="true" v-if="orderList.length !== 0">
         <div class="device-list-container">
-          <scroll-view class="scroll-view">
-            <div class="device-list-item" v-for="item in deviceList" :key="item.id">
+          <scroll-view class="scroll-view" scroll-y>
+            <div
+              @click="goToOrderDetail(item.options, item.status, item.id)"
+              class="device-list-item"
+              v-for="item in orderList"
+              :key="item.id"
+            >
               <div class="device-title">
                 <div class="prefix" :class="[item.status]"></div>
-                <span class="title">订单编号32423</span>
-                <span class="status" :class="[item.status]">下单</span>
+                <span class="title">订单编号{{ item.id }}</span>
+                <span class="status busy">{{ item.status }}</span>
                 <div class="device-list-item-right">
                   <u-icon name="arrow-right"></u-icon>
                 </div>
@@ -17,24 +22,26 @@
               <div class="device-detail">
                 <div class="icon">
                   <image :src="item.status"></image>
-                  <div class="bottom-color" :class="[item.status]">
-                    <text>{{ item.busyGpu }}/{{ item.allGpu }}</text>
-                  </div>
+                  <div class="bottom-color" :class="[item.status]"></div>
                 </div>
                 <div class="content">
-                  <div>商品信息：<text class="value">牙具/维修器具</text></div>
-                  <div>维修方式：<text class="value">上门维修</text></div>
+                  <div>
+                    商品信息：<text class="value">{{ item.goodsName }}</text>
+                  </div>
+                  <div>
+                    维修方式：<text class="value">{{ showWay[item.options] }}</text>
+                  </div>
                 </div>
               </div>
               <div class="device-card">
-                <div class="card-item">合计：¥ 98.0</div>
+                <div class="card-item">合计：¥ {{ item.payment.toFixed(2) }}</div>
               </div>
             </div>
             <div class="perch-line"></div>
           </scroll-view>
         </div>
       </u-skeleton>
-      <div class="empty-status" v-if="deviceList.length === 0">
+      <div class="empty-status" v-if="orderList.length === 0">
         <scroll-view class="scroll-view" scroll-y>
           <div class="device-empty">
             <image src="@/assets/img/home/empty.png"></image>
@@ -49,65 +56,53 @@
 <script setup lang="ts">
 import { ref, onBeforeMount } from 'vue';
 import NavigationBar from '@/components/NavigationBar.vue';
+import { getAllUserAllOrder, getUserAllOrder } from '@/api/user.ts';
+
+const showWay = ['寄件维修', '上门维修'];
 
 const loading = ref<boolean>(true);
-const deviceList = ref<
+const orderList = ref<
   {
     id: string;
-    name: string;
-    status: string;
-    isOfficial: boolean;
-    workTime: number;
-    income: number;
-    allGpu: number;
-    busyGpu: number;
-    gpuCount: { gpu: string; num: number };
-    ratio: number;
+    status: number;
+    options: number;
+    goodsName: string;
+    payment: number;
+    imgUrl: string;
   }[]
 >([
   {
     id: '1',
-    name: '设备1',
-    status: 'busy',
-    isOfficial: true,
-    workTime: 8,
-    income: 100,
-    allGpu: 8,
-    busyGpu: 4,
-    gpuCount: { gpu: 'A100', num: 4 },
-    ratio: 50,
+    status: 0,
+    options: 1,
+    goodsName: '牙具/维修器具',
+    payment: 98.0,
+    imgUrl: '@/assets/img/home/empty.png',
   },
 ]);
 
-onBeforeMount(() => {
-  deviceList.value = [
-    {
-      id: '1',
-      name: '设备1',
-      status: 'busy',
-      isOfficial: true,
-      workTime: 8,
-      income: 100,
-      allGpu: 8,
-      busyGpu: 4,
-      gpuCount: { gpu: 'A100', num: 4 },
-      ratio: 50,
-    },
-    {
-      id: '1',
-      name: '设备1',
-      status: 'busy',
-      isOfficial: true,
-      workTime: 8,
-      income: 100,
-      allGpu: 8,
-      busyGpu: 4,
-      gpuCount: { gpu: 'A100', num: 4 },
-      ratio: 50,
-    },
-  ];
+onBeforeMount(async () => {
   loading.value = false;
+  const role = uni.getStorageSync('role');
+  console.log('role', role);
+  const res = role === 1 ? await getUserAllOrder() : await getAllUserAllOrder();
+  if (res.code === 200) {
+    orderList.value = res.data;
+  }
 });
+
+function goToOrderDetail(options: number, status: number, orderId: string) {
+  console.log('status', status);
+  if (options === 0) {
+    uni.navigateTo({
+      url: `/pages/detail/mail?orderStatus=${status}&orderId=${orderId}`,
+    });
+  } else {
+    uni.navigateTo({
+      url: `/pages/detail/visit?orderStatus=${status}&orderId=${orderId}`,
+    });
+  }
+}
 </script>
 
 <style scoped lang="scss">

@@ -1,3 +1,17 @@
+<template>
+  <view class="login-index">
+    <NavigationBar :showArrow="false" title="牙e维修在线平台" :border="false"></NavigationBar>
+    <div class="login-index-content">
+      <div class="content"><image src="@/assets/img/login/logo.png" alt="" /><text>微笑 · 无忧维修</text></div>
+      <button class="btn-quick btn-content" open-type="getPhoneNumber" @click="clickQuickLogin">本机登录</button>
+      <button class="btn-phone btn-content" @click="clickRegister">注册</button>
+      <Agreement v-model:checked="checked" class="agreement"></Agreement>
+    </div>
+    <div class="background-yellow"></div>
+    <div class="background-purple"></div>
+  </view>
+</template>
+
 <script setup lang="ts">
 import NavigationBar from '@/components/NavigationBar.vue';
 import Agreement from '@/components/Agreement.vue';
@@ -5,29 +19,18 @@ import { ref } from 'vue';
 
 const checked = ref<boolean>(false);
 
-function clickQuickLogin() {}
-function clickPhoneLogin() {
+function clickQuickLogin() {
+  console.log('clickQuickLogin');
   uni.navigateTo({
     url: '/pages/login/phoneLogin',
   });
 }
+function clickRegister() {
+  uni.navigateTo({
+    url: '/pages/register/index',
+  });
+}
 </script>
-
-<template>
-  <view class="login-index">
-    <NavigationBar :showArrow="false" title="牙e维修在线平台" :border="false"></NavigationBar>
-    <div class="login-index-content">
-      <div class="content"><image src="@/assets/img/login/logo.png" alt="" /><text>微笑 · 无忧维修</text></div>
-      <button class="btn-quick btn-content" open-type="getPhoneNumber" @getphonenumber="clickQuickLogin">
-        本机快速登录
-      </button>
-      <button class="btn-phone btn-content" @click="clickPhoneLogin">手机号登录</button>
-      <Agreement v-model:checked="checked" class="agreement"></Agreement>
-    </div>
-    <div class="background-yellow"></div>
-    <div class="background-purple"></div>
-  </view>
-</template>
 
 <style scoped lang="scss">
 .btn-content {

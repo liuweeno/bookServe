@@ -9,7 +9,7 @@
             <img class="avatar" src="@/assets/img/personalCenter/defaultAvatar.png" alt="" />
           </div>
           <div class="username-box">
-            <div class="username">昵称nickname</div>
+            <div class="username">{{ userInfo.username }}</div>
             <div class="edit-btn">
               编辑个人资料
               <u-icon name="arrow-right"></u-icon>
@@ -22,17 +22,19 @@
             <div class="top-side">
               <span class="title">手机号码</span>
               <div class="detail-box">
-                <span class="amount"><span style="font-size: 0.875rem"></span>17748690265</span>
+                <span class="amount"><span style="font-size: 0.875rem"></span>{{ userInfo.phone }}</span>
               </div>
             </div>
             <div class="bottom-side">
               <div class="left-side">
-                <span class="title">总订单</span>
-                <span class="amount"><span style="font-size: 0.875rem">¥ </span>1233单</span>
+                <span class="title">用户名</span>
+                <span class="amount"><span style="font-size: 0.875rem"></span>{{ userInfo.username }}</span>
               </div>
               <div class="right-side">
-                <span class="title">已结算收益</span>
-                <span class="amount"> <span style="font-size: 0.875rem">¥ </span>1321.00 </span>
+                <span class="title">角色</span>
+                <span class="amount">
+                  <span style="font-size: 0.875rem"></span>{{ userInfo.role === 1 ? '普通用户' : '管理员' }}</span
+                >
               </div>
             </div>
           </div>
@@ -44,7 +46,7 @@
               </div>
               <u-icon name="arrow-right"></u-icon>
             </div>
-            <div class="btn-box">
+            <div class="btn-box" @click="goToAllOrder">
               <div class="left">
                 <img class="icon" src="@/assets/img/personalCenter/account.png" alt="wu" />
                 <span class="word">所有订单</span>
@@ -72,7 +74,13 @@
 <script setup lang="ts">
 import NavigationBar from '@/components/NavigationBar.vue';
 import { ref } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
 
+const userInfo = ref({
+  phone: '',
+  role: 1,
+  username: '',
+});
 const baseList = ref([
   {
     name: 'photo',
@@ -106,6 +114,18 @@ const getAccount = async () => {
 const getAmountInfo = async () => {
   console.log('getAmountInfo');
 };
+
+function goToAllOrder() {
+  uni.navigateTo({
+    url: '/pages/user/allOrder',
+  });
+}
+
+onLoad(() => {
+  userInfo.value.phone = uni.getStorageSync('phone');
+  userInfo.value.role = uni.getStorageSync('role');
+  userInfo.value.phone = uni.getStorageSync('phone');
+});
 </script>
 
 <style lang="scss">

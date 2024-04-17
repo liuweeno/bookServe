@@ -1,6 +1,6 @@
 <template>
   <view class="visit-index">
-    <NavigationBar :showArrow="false" title="邮寄维修" :border="false" background="white"></NavigationBar>
+    <NavigationBar :showArrow="true" title="邮寄维修" :border="false" background="white"></NavigationBar>
     <view class="visit">
       <view class="form">
         <div class="tips">
@@ -10,35 +10,31 @@
         <u-form ref="visitForm" :model="orderForm" style="width: 100%">
           <u-form-item
             style="width: 100%"
-            label="姓名: "
+            label="联系人: "
             :borderBottom="true"
             prop="userInfo.name"
             borderBottom
             ref="item1"
           >
-            <u--input v-model="orderForm.userInfo.name" border="none"></u--input>
+            <u--input v-model="orderForm.name" border="none"></u--input>
           </u-form-item>
-          <u-form-item label="手机: " :borderBottom="true" prop="userInfo.phone" borderBottom ref="item1">
-            <u--input v-model="orderForm.userInfo.phone" border="none"></u--input>
-          </u-form-item>
-          <u-form-item label="物流名称: " :borderBottom="true" prop="userInfo.shippingName" borderBottom ref="item1">
-            <u--input v-model="orderForm.userInfo.shippingName" border="none"></u--input>
-          </u-form-item>
-          <u-form-item label="物流单号: " :borderBottom="true" prop="userInfo.shippingCode" borderBottom ref="item1">
-            <u--input v-model="orderForm.userInfo.shippingCode" border="none"></u--input>
+          <u-form-item label="用户备注: " :borderBottom="true" prop="userInfo.shippingCode" borderBottom ref="item1">
+            <up-textarea v-model="orderForm.buyMessage" placeholder="请输入用户备注"></up-textarea>
           </u-form-item>
         </u-form>
 
         <div class="commodity-detail">
           <img src="@/assets/img/login/is-check.png" alt="" />
           <div>
-            <div>商品名称</div>
-            <div style="color: #a4a4a4; font-size: small">详细介绍/详细介绍/详细介绍/详细介绍/详细介绍</div>
+            <div>{{ itemDetail.goodsName }}</div>
+            <div style="color: #a4a4a4; font-size: small">{{ itemDetail.description }}</div>
           </div>
         </div>
         <div class="confirm-btn-container">
-          <div class="showPrice">预估费用 <span>¥89.00</span></div>
-          <div class="confirm-btn">提交下单</div>
+          <div class="showPrice">
+            预估费用 <span>¥ {{ itemDetail.price.toFixed(2) }}</span>
+          </div>
+          <div class="confirm-btn" @click="confirmAdd">提交下单</div>
         </div>
       </view>
     </view>
@@ -47,21 +43,24 @@
 
 <script setup lang="ts">
 import NavigationBar from '@/components/NavigationBar.vue';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { getGoodsDetail, addMailOrder } from '@/api/user';
 
 const showSex = ref(false);
 const orderForm = ref({
-  userInfo: {
-    name: '',
-    sex: '',
-    phone: '',
-    address: '',
-    shippingName: '',
-    shippingCode: '',
-  },
+  name: '',
+  shippingName: '',
+  shippingCode: '',
+  buyMessage: '',
 });
 const showTimePicker = ref<boolean>(false);
 const timeValue = ref(Date.now());
+const itemDetail = ref({
+  goodsName: '商品名称1',
+  description: '详细介绍/详细介绍/详细介绍/详细介绍/详细介绍',
+  price: 100,
+  id: 1,
+});
 
 const actions = [
   {
@@ -72,20 +71,61 @@ const actions = [
   },
 ];
 
-function sexSelect(e: any) {
-  orderForm.value.userInfo.sex = e.name;
-  // visitForm.validateField('userInfo.sex');
-}
-
-function confirmMonth(e: { value: string }) {
-  timeValue.value = e.value;
-  closePicker();
-  console.log(e.value);
-}
-
 function closePicker() {
   showTimePicker.value = false;
 }
+
+onMounted(async () => {
+  let id = (getCurrentPages()[1] as any).options.id;
+  console.log(id, 'id');
+  const res = await getGoodsDetail({ goodsId: id });
+  if (res.code !== 200) {
+    uni.showToast({
+      title: '获取商品详情失败',
+      icon: 'none',
+    });
+  }
+  itemDetail.value = res.data;
+});
+
+// 第一次创建订单
+async function confirmAdd() {
+  const name = uni.getStorageSync('username');
+  const res = await addMailOrder({
+    buyerMessage: orderForm.value.buyMessage,
+    payment: itemDetail.value.price,
+    buyerName: name,
+    receiver: orderForm.value.name,
+    options: 0,
+    goodsId: itemDetail.value.id,
+  });
+  if (res.code !== 200) {
+    uni.showToast({
+      title: '下单失败',
+      icon: 'none',
+    });
+    return;
+  }
+  uni.showToast({
+    title: '下单成功',
+    icon: 'success',
+    duration: 1500,
+  });
+  setTimeout(() => {
+    uni.navigateTo({
+      url: '/pages/user/allOrder',
+    });
+  }, 1500);
+}
+
+// 第二次进入订单，填写快递单号
+function writeExpress() {}
+
+// 第三次进入订单，付款
+function pay() {}
+
+// 第四次进入订单，评价
+function evaluate() {}
 </script>
 
 <style scoped lang="scss">

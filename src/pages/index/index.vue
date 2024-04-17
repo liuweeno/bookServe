@@ -15,14 +15,17 @@
       </u-grid>
       <u-toast ref="uToastRef" />
     </view>
-    <view class="ad">
-      <img src="../../assets/img/index/ad.png" alt="" />
-    </view>
+    <view class="ad"> <img src="../../assets/img/index/ad.png" alt="" /> </view>
     <view class="grid-item">
-      <u-grid :border="true" @click="click" col="2">
-        <u-grid-item v-for="(baseListItem, baseListIndex) in baseList" :key="baseListIndex">
-          <img src="" alt="" />
-          <text class="grid-text">{{ baseListItem.title }}</text>
+      <u-grid :border="true" col="2">
+        <u-grid-item
+          v-for="(baseListItem, baseListIndex) in commodityList"
+          :key="baseListIndex"
+          @click="goToDetail(baseListItem.id)"
+        >
+          {{ baseListItem.headPic }}
+          <img :src="baseListItem.headPic" alt="" />
+          <text class="grid-text">{{ baseListItem.goodsName }}</text>
         </u-grid-item>
       </u-grid>
       <u-toast ref="uToastRef" />
@@ -31,9 +34,11 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref, onMounted } from 'vue';
 import NavigationBar from '@/components/NavigationBar.vue';
+import { getCommodity } from '@/api/user.ts';
 
+const commodityList = ref([]);
 const uToastRef = ref(null);
 const list1 = reactive([
   'https://cdn.uviewui.com/uview/swiper/swiper1.png',
@@ -73,6 +78,21 @@ function change(index) {}
 function click(index) {
   console.log('click', index);
 }
+
+function goToDetail(id) {
+  uni.navigateTo({
+    url: `/pages/choose/index?id=${id}`,
+  });
+}
+
+onMounted(async () => {
+  const res = await getCommodity({ page: 1, size: 100 });
+  if (res.code !== 200) {
+    uToastRef.value.show('获取商品列表失败');
+    return;
+  }
+  commodityList.value = res.data.records;
+});
 </script>
 
 <style lang="scss">

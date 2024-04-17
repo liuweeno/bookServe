@@ -11,19 +11,18 @@
       </view>
       <up-input
         border="bottom"
-        type="number"
+        type="string"
         placeholderClass="placeholder-class"
-        placeholder="请输入手机号"
-        v-model="phoneNumber"
+        placeholder="请输入用户名"
+        v-model="username"
         fontSize="34rpx"
       >
         <template #prefix>
-          <image class="prefix-image" src="@/assets/img/login/phone.png"></image>
+          <image class="prefix-image" src="@/assets/img/register/role.png"></image>
         </template>
       </up-input>
       <up-input
         border="bottom"
-        v-if="wayChoose === 'pw-login'"
         type="text"
         password
         placeholderClass="placeholder-class"
@@ -35,28 +34,9 @@
           <image class="prefix-image" src="@/assets/img/login/pw.png"></image>
         </template>
       </up-input>
-      <up-input
-        border="bottom"
-        v-else
-        type="number"
-        placeholderClass="placeholder-class"
-        placeholder="请输入验证码"
-        v-model="passwordAndCode"
-        fontSize="34rpx"
-      >
-        <template #prefix>
-          <image class="prefix-image" src="@/assets/img/login/code-icon.png"></image>
-        </template>
-        <template #suffix>
-          <view class="send-code">
-            <text class="font" v-if="canSendCode" @click="clickSentCode">发送验证码</text>
-            <text v-else class="sent-code">{{ seconds }}</text>
-          </view>
-        </template>
-      </up-input>
       <button
         class="certain-button"
-        :class="{ 'certain-button-ready': phoneNumber && passwordAndCode }"
+        :class="{ 'certain-button-ready': username && passwordAndCode }"
         @click="clickLogin"
       >
         登录
@@ -74,10 +54,10 @@ import NavigationBar from '@/components/NavigationBar.vue';
 import Agreement from '@/components/Agreement.vue';
 import { ref } from 'vue';
 import BothAgreement from '@/components/BothAgreement.vue';
-import { login } from '@/api/user.ts';
+import { login, getUserName } from '@/api/user.ts';
 
 const wayChoose = ref<string>('code-login');
-const phoneNumber = ref<string>('');
+const username = ref<string>('');
 const passwordAndCode = ref<string>('');
 // const phoneNumber = ref<string>('13187098660');
 // const passwordAndCode = ref<string>('qq222222');
@@ -102,11 +82,35 @@ async function clickSentCode() {}
 
 async function clickLogin() {
   const res = await login({
-    phone: phoneNumber.value,
-    way: wayChoose.value,
-    pwd: passwordAndCode.value,
-    app_type: 'repair',
+    username: username.value,
+    password: passwordAndCode.value,
   });
+  if (res.code === 200) {
+    uni.showToast({
+      title: '登录成功',
+      icon: 'success',
+    });
+    uni.setStorageSync('token', res.data);
+    const nameRes = await getUserName();
+    if (nameRes.code === 200) {
+      console.log('nameRes.data', nameRes.data);
+      uni.setStorageSync('username', nameRes.data.username);
+      uni.setStorageSync('phone', nameRes.data.phone);
+      uni.setStorageSync('profile', nameRes.data.profile);
+      uni.setStorageSync('role', nameRes.data.role);
+      let role = nameRes.data.role;
+      console.log('role', role);
+      console.log('nameRes.data', nameRes.data);
+    }
+    uni.switchTab({
+      url: '/pages/index/index',
+    });
+  } else {
+    uni.showToast({
+      title: res.msg,
+      icon: 'none',
+    });
+  }
 }
 
 function bothAgreement() {
