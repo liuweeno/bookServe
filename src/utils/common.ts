@@ -64,3 +64,14 @@ export function customFormatDate(date: string) {
     return dayjs(date).format('YYYY.MM.DD HH:mm:ss');
   }
 }
+
+export function formatTimestamp(timestamp: number) {
+  // return dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss');
+  return dayjs(timestamp).toISOString();
+}
+
+export function formatTimestampCommon(timestamp: number) {
+  console.log('timestamp', timestamp);
+  return dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss');
+  // return dayjs(timestamp).toISOString();
+}

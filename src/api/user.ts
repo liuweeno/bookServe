@@ -39,3 +39,7 @@ export function updateOrderDetail(data: {}) {
 export function getAllUserAllOrder(data: {}) {
   return $http.get('/orders/findAll', data);
 }
+
+export function addVisitOrder(data: {}) {
+  return $http.post('/orders/addDoor', data);
+}

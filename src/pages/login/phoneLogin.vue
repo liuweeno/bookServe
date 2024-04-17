@@ -9,14 +9,7 @@
       <view class="login-way">
         <text class="checked-way" @click="clickChangeWay('pw-login')">密码登录</text>
       </view>
-      <up-input
-        border="bottom"
-        type="string"
-        placeholderClass="placeholder-class"
-        placeholder="请输入用户名"
-        v-model="username"
-        fontSize="34rpx"
-      >
+      <up-input border="bottom" type="string" placeholder="请输入用户名" v-model="username" fontSize="34rpx">
         <template #prefix>
           <image class="prefix-image" src="@/assets/img/register/role.png"></image>
         </template>

@@ -2,7 +2,7 @@
   <NavigationBar :showArrow="false" title="首页" :border="false" background="white"></NavigationBar>
 
   <view class="index">
-    <u-search placeholder="日照香炉生紫烟1" v-model="keyword"></u-search>
+    <u-search placeholder="" v-model="keyword"></u-search>
     <view class="swiper">
       <u-swiper :list="list1" @change="change" @click="click" class="swiper"></u-swiper>
     </view>
@@ -23,8 +23,7 @@
           :key="baseListIndex"
           @click="goToDetail(baseListItem.id)"
         >
-          {{ baseListItem.headPic }}
-          <img :src="baseListItem.headPic" alt="" />
+          <img class="grid-img" :src="base + baseListItem.headPic" alt="" />
           <text class="grid-text">{{ baseListItem.goodsName }}</text>
         </u-grid-item>
       </u-grid>
@@ -38,6 +37,7 @@ import { reactive, ref, onMounted } from 'vue';
 import NavigationBar from '@/components/NavigationBar.vue';
 import { getCommodity } from '@/api/user.ts';
 
+const base = 'http://114.132.45.214:9091/';
 const commodityList = ref([]);
 const uToastRef = ref(null);
 const list1 = reactive([
@@ -45,32 +45,32 @@ const list1 = reactive([
   'https://cdn.uviewui.com/uview/swiper/swiper2.png',
   'https://cdn.uviewui.com/uview/swiper/swiper3.png',
 ]);
-const keyword = ref('遥看瀑布挂前川1');
+const keyword = ref('');
 // 创建响应式数据
 const baseList = ref([
-  {
-    name: 'photo',
-    title: '图片',
-  },
-  {
-    name: 'lock',
-    title: '锁头',
-  },
-  {
-    name: 'star',
-    title: '星星',
-  },
-  {
-    name: 'hourglass',
-    title: '沙漏',
-  },
   {
     name: 'home',
     title: '首页',
   },
   {
-    name: 'volume', // 注意：这里修改了 name 从 'star' 改为 'volume'，以避免列表中两个元素具有相同的 name
-    title: '音量',
+    name: 'man-add',
+    title: '我的',
+  },
+  {
+    name: 'email',
+    title: '日历',
+  },
+  {
+    name: 'more-circle',
+    title: '更多',
+  },
+  {
+    name: 'server-man',
+    title: '客服',
+  },
+  {
+    name: 'share-square', // 注意：这里修改了 name 从 'star' 改为 'volume'，以避免列表中两个元素具有相同的 name
+    title: '分享',
   },
 ]);
 
@@ -107,6 +107,12 @@ onMounted(async () => {
 
   .grid-item {
     margin-top: 16px;
+
+    .grid-img {
+      width: 60px;
+      height: 60px;
+    }
+
     .grid-text {
       font-size: 14px;
       color: #909399;
@@ -118,7 +124,6 @@ onMounted(async () => {
   }
 
   .ad {
-    @include br;
     overflow: hidden;
     margin-top: 16px;
     height: 80px;
@@ -126,8 +131,7 @@ onMounted(async () => {
     border-radius: 50px;
 
     > img {
-      width: 1%;
-      height: 100%;
+      width: 100%;
     }
   }
 }

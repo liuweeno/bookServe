@@ -10,10 +10,10 @@
           </div>
           <div class="username-box">
             <div class="username">{{ userInfo.username }}</div>
-            <div class="edit-btn">
-              编辑个人资料
-              <u-icon name="arrow-right"></u-icon>
-            </div>
+            <!--            <div class="edit-btn">-->
+            <!--              编辑个人资料-->
+            <!--              <u-icon name="arrow-right"></u-icon>-->
+            <!--            </div>-->
           </div>
         </div>
         <div class="bg">
@@ -33,7 +33,8 @@
               <div class="right-side">
                 <span class="title">角色</span>
                 <span class="amount">
-                  <span style="font-size: 0.875rem"></span>{{ userInfo.role === 1 ? '普通用户' : '管理员' }}</span
+                  <span style="font-size: 0.875rem"></span
+                  >{{ Number(userInfo.role) === 1 ? '普通用户' : '管理员' }}</span
                 >
               </div>
             </div>
@@ -54,15 +55,19 @@
               <u-icon name="arrow-right"></u-icon>
             </div>
           </div>
-          <button class="u-button">退出登录</button>
+          <button class="u-button" @click="logOut">退出登录</button>
         </div>
       </div>
       <u-divider text="猜你喜欢"></u-divider>
       <view class="grid-item">
         <u-grid :border="true" col="2">
-          <u-grid-item v-for="(baseListItem, baseListIndex) in baseList" :key="baseListIndex">
-            <img src="@/assets/img/login/is-check.png" alt="" />
-            <text class="grid-text">{{ baseListItem.title }}</text>
+          <u-grid-item
+            v-for="(baseListItem, baseListIndex) in commodityList"
+            :key="baseListIndex"
+            @click="goToDetail(baseListItem.id)"
+          >
+            <img class="grid-img" style="height: 60px; width: 60px" :src="base + baseListItem.headPic" alt="" />
+            <text class="grid-text">{{ baseListItem.goodsName }}</text>
           </u-grid-item>
         </u-grid>
         <u-toast ref="uToastRef" />
@@ -75,38 +80,15 @@
 import NavigationBar from '@/components/NavigationBar.vue';
 import { ref } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
+import { getCommodity } from '@/api/user';
 
 const userInfo = ref({
   phone: '',
   role: 1,
   username: '',
 });
-const baseList = ref([
-  {
-    name: 'photo',
-    title: '图片',
-  },
-  {
-    name: 'lock',
-    title: '锁头',
-  },
-  {
-    name: 'star',
-    title: '星星',
-  },
-  {
-    name: 'hourglass',
-    title: '沙漏',
-  },
-  {
-    name: 'home',
-    title: '首页',
-  },
-  {
-    name: 'volume', // 注意：这里修改了 name 从 'star' 改为 'volume'，以避免列表中两个元素具有相同的 name
-    title: '音量',
-  },
-]);
+const base = 'http://114.132.45.214:9091/';
+const commodityList = ref([]);
 const getAccount = async () => {
   console.log('getAccount');
 };
@@ -121,10 +103,36 @@ function goToAllOrder() {
   });
 }
 
-onLoad(() => {
+function logOut() {
+  uni.removeStorageSync('phone');
+  uni.removeStorageSync('role');
+  uni.removeStorageSync('username');
+  uni.removeStorageSync('profile');
+  uni.navigateTo({
+    url: '/pages/login/index',
+  });
+}
+
+function goToDetail(id: any) {
+  uni.navigateTo({
+    url: `/pages/choose/index?id=${id}`,
+  });
+}
+
+onLoad(async () => {
   userInfo.value.phone = uni.getStorageSync('phone');
   userInfo.value.role = uni.getStorageSync('role');
-  userInfo.value.phone = uni.getStorageSync('phone');
+  userInfo.value.username = uni.getStorageSync('username');
+
+  const res = await getCommodity({ page: 1, size: 100 });
+  if (res.code !== 200) {
+    uni.showToast({
+      title: res.msg,
+      icon: 'none',
+    });
+    return;
+  }
+  commodityList.value = res.data.records;
 });
 </script>
 
@@ -643,6 +651,12 @@ onLoad(() => {
 
     .grid-item {
       margin-top: 16px;
+
+      .grid-img {
+        width: 60px;
+        height: 60px;
+      }
+
       .grid-text {
         font-size: 14px;
         color: #909399;

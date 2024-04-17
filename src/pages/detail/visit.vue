@@ -2,11 +2,12 @@
   <view class="visit-index">
     <NavigationBar :showArrow="true" title="上门维修订单详情" :border="false" background="white"></NavigationBar>
     <div class="tips">
-      <span class="big-one">已安排工程师上门</span><span class="small-one">已经安排工程师上门，请保持电话畅通</span>
+      <span class="big-one">{{ modeShow[status].title }}</span
+      ><span class="small-one">{{ modeShow[status].littleTitle }}</span>
     </div>
     <div class="tips second-tips">
       <span class="big-one second-big">注意事项</span>
-      <span class="small-one">1. 如需更改上门维修时间，请提前联系</span>
+      <span class="small-one">{{ modeShow[status].notice }}</span>
     </div>
     <view class="form">
       <u-form ref="visitForm" :model="orderForm" style="width: 100%">
@@ -18,43 +19,38 @@
           borderBottom
           ref="item1"
         >
-          <u--input disabled v-model="orderForm.userInfo.name" border="none"></u--input>
-        </u-form-item>
-        <u-form-item
-          label="性别"
-          :borderBottom="true"
-          prop="userInfo.sex"
-          borderBottom
-          @click="showSex = true"
-          ref="item1"
-        >
-          <u--input disabled v-model="orderForm.userInfo.phone" border="none"></u--input>
+          <u--input disabled v-model="confirmObj.receiver" border="none"></u--input>
         </u-form-item>
         <u-form-item label="手机: " :borderBottom="true" prop="userInfo.phone" borderBottom ref="item1">
-          <u--input disabled v-model="orderForm.userInfo.phone" border="none"></u--input>
+          <u--input disabled v-model="confirmObj.phone" border="none"></u--input>
         </u-form-item>
         <u-form-item label="地址: " :borderBottom="true">
-          <u--input disabled v-model="orderForm.userInfo.phone" border="none"></u--input>
+          <u--input disabled v-model="confirmObj.goAddress" border="none"></u--input>
         </u-form-item>
         <u-form-item label="上门时间:" borderBottom>
-          <u--input disabled v-model="orderForm.userInfo.phone" border="none"></u--input>
+          <u--input disabled v-model="confirmObj.goTime" border="none"></u--input>
         </u-form-item>
       </u-form>
-
       <div class="commodity-detail">
-        <img src="@/assets/img/login/is-check.png" alt="" />
+        <img :src="base + confirmObj.goods.headPic" alt="" />
         <div>
-          <div>商品名称</div>
-          <div style="color: #a4a4a4; font-size: small">详细介绍/详细介绍/详细介绍/详细介绍/详细介绍</div>
+          <div>{{ confirmObj.goods.goodsName }}</div>
+          <div style="color: #a4a4a4; font-size: small">{{ confirmObj.goods.description }}</div>
         </div>
       </div>
       <div class="showTime">
-        <div class="item"><span class="title">订单编号： </span><span class="content">J1231312321312</span></div>
-        <div class="item"><span class="title">下单时间： </span><span class="content">2024-04-08 02:23:32</span></div>
+        <div class="item">
+          <span class="title">订单编号： </span><span class="content">{{ confirmObj.id }}</span>
+        </div>
+        <div class="item">
+          <span class="title">下单时间： </span><span class="content">{{ confirmObj.createTime }}</span>
+        </div>
       </div>
       <div class="confirm-btn-container">
-        <div class="showPrice">预估费用 <span>¥89.00</span></div>
-        <div class="confirm-btn">确认维修完成</div>
+        <div class="showPrice">
+          预估费用 <span>¥{{ confirmObj.goods.price.toFixed(2) }}</span>
+        </div>
+        <div :class="canClick ? 'confirm-btn' : 'no-confirm'" @click="confirm">{{ buttonMessage }}</div>
       </div>
     </view>
   </view>
@@ -62,36 +58,141 @@
 
 <script setup lang="ts">
 import NavigationBar from '@/components/NavigationBar.vue';
-import { ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
+import { getGoodsDetail, getOrderDetail, updateOrderDetail } from '@/api/user';
+import { formatTimestampCommon } from '@/utils/common';
 
-const showSex = ref(false);
+const base = 'http://114.132.45.214:9091/';
 const orderForm = ref({
-  userInfo: {
-    name: '',
-    sex: '',
-    phone: '',
-    address: '',
-  },
+  name: '',
+  phone: '',
+  goAddress: '',
+  goTime: '',
 });
-const showTimePicker = ref<boolean>(false);
-const timeValue = ref(Date.now());
+const role = ref<number>(0);
+const status = ref<number>(0);
+const id = ref<string>('');
+const orderDetail = ref<{
+  payment: number;
+  orderId: string;
+  orderTime: string;
+  goodsName: string;
+  goodsDesc: string;
+  goodsPic: string;
+}>({
+  payment: 0,
+  orderId: '',
+  orderTime: '',
+  goodsName: '',
+  goodsDesc: '',
+  goodsPic: '',
+});
+const confirmObj = ref({});
+const buttonMessage = ref<string>('');
+const canClick = ref<boolean>(false);
 
-const actions = [
-  {
-    name: '男',
+const modeShow = {
+  1: {
+    title: '用户已经下订单',
+    littleTitle: '用户已经下订单，请安排工程师上门',
+    notice: '1.请保持电话畅通，接收工程师的信息',
   },
-  {
-    name: '女',
+  3: {
+    title: '已安排工程师上门',
+    littleTitle: '已经安排工程师上门，请保持电话畅通',
+    notice: '1. 如需更改上门维修时间，请提前联系',
   },
-];
+  5: {
+    title: '工程师已上门，维修完毕',
+    littleTitle: '工程师已上门，维修完毕',
+    notice: '1.请确认设备完好后再付款',
+  },
+  7: {
+    title: '订单已完成',
+    littleTitle: '订单已完成',
+    notice: '1.如有问题请联系客服',
+  },
+};
 
-function sexSelect(e: any) {
-  orderForm.value.userInfo.sex = e.name;
-  // visitForm.validateField('userInfo.sex');
-}
+onLoad(async (options: any) => {
+  role.value = uni.getStorageSync('role');
+  status.value = options.orderStatus;
+  id.value = options.orderId;
+  switch (Number(status.value)) {
+    case 1:
+      buttonMessage.value = role.value === 2 ? '确认安排工程师上门' : '等待商家安排工程师';
+      canClick.value = role.value === 2;
+      break;
+    case 3:
+      buttonMessage.value = role.value === 2 ? '确认上门' : '等待工程师上门';
+      canClick.value = role.value === 2;
+      break;
+    case 5:
+      buttonMessage.value = role.value === 1 ? '确认维修完毕' : '等待用户确认';
+      canClick.value = role.value === 1;
+      break;
+    case 7:
+      buttonMessage.value = '订单已完成';
+      canClick.value = false;
+      break;
+  }
+  const res = await getOrderDetail({ id: id.value });
+  if (res.code === 200) {
+    confirmObj.value = res.data;
+  }
+});
 
-function closePicker() {
-  showTimePicker.value = false;
+async function confirm() {
+  switch (Number(status.value)) {
+    case 1: {
+      if (role.value === 2) {
+        confirmObj.value.status = 3;
+        confirmObj.value.id = id.value;
+        const res = await updateOrderDetail(confirmObj.value);
+        if (res.code === 200) {
+          uni.showToast({
+            title: '提交成功',
+            icon: 'success',
+          });
+          setTimeout(() => {
+            uni.navigateBack();
+          }, 1000);
+        }
+      }
+      break;
+    }
+    case 3: {
+      if (role.value === 2) {
+        confirmObj.value.status = 5;
+        const res = await updateOrderDetail(confirmObj.value);
+        if (res.code === 200) {
+          uni.showToast({
+            title: '提交成功',
+            icon: 'success',
+          });
+          setTimeout(() => {
+            uni.navigateBack();
+          }, 1000);
+        }
+      }
+    }
+    case 5: {
+      if (role.value === 1) {
+        confirmObj.value.status = 7;
+        const res = await updateOrderDetail(confirmObj.value);
+        if (res.code === 200) {
+          uni.showToast({
+            title: '提交成功',
+            icon: 'success',
+          });
+          setTimeout(() => {
+            uni.navigateBack();
+          }, 1000);
+        }
+      }
+    }
+  }
 }
 </script>
 
@@ -200,6 +301,15 @@ function closePicker() {
         white-space: nowrap;
         height: 100%;
         background-color: #713de1;
+        color: white;
+        @include flex-mode;
+      }
+
+      .no-confirm {
+        padding: 0 28px;
+        white-space: nowrap;
+        height: 100%;
+        background-color: gainsboro;
         color: white;
         @include flex-mode;
       }

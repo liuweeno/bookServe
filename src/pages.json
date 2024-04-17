@@ -112,12 +112,6 @@
 				"text": "首页"
 			},
 			{
-				"pagePath": "pages/calendar/index",
-				"iconPath": "./static/img/mail.png",
-				"selectedIconPath": "./static/img/mailSelected.png",
-				"text": "维修日历"
-			},
-			{
 				"pagePath": "pages/personalCenter/index",
 				"iconPath": "./static/img/user.png",
 				"selectedIconPath": "./static/img/userSelected.png",

@@ -24,7 +24,7 @@
         </u-form>
 
         <div class="commodity-detail">
-          <img src="@/assets/img/login/is-check.png" alt="" />
+          <img :src="base + itemDetail.headPic" alt="" />
           <div>
             <div>{{ itemDetail.goodsName }}</div>
             <div style="color: #a4a4a4; font-size: small">{{ itemDetail.description }}</div>
@@ -46,6 +46,7 @@ import NavigationBar from '@/components/NavigationBar.vue';
 import { ref, onMounted } from 'vue';
 import { getGoodsDetail, addMailOrder } from '@/api/user';
 
+const base = 'http://114.132.45.214:9091/';
 const showSex = ref(false);
 const orderForm = ref({
   name: '',
@@ -60,6 +61,7 @@ const itemDetail = ref({
   description: '详细介绍/详细介绍/详细介绍/详细介绍/详细介绍',
   price: 100,
   id: 1,
+  headPic: '',
 });
 
 const actions = [

@@ -38,7 +38,7 @@
       </u-form>
 
       <div class="commodity-detail">
-        <img src="@/assets/img/login/is-check.png" alt="" />
+        <img :src="base + orderDetail.goodsPic" alt="" />
         <div>
           <div>{{ orderDetail.goodsName }}</div>
           <div style="color: #a4a4a4; font-size: small">{{ orderDetail.goodsDesc }}</div>
@@ -70,6 +70,7 @@ import { ref, onBeforeMount } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
 import { getGoodsDetail, getOrderDetail, updateOrderDetail } from '@/api/user';
 
+const base = 'http://114.132.45.214:9091/';
 const orderForm = ref({
   name: '',
   shippingName: '',
@@ -149,37 +150,36 @@ async function confirm() {
       }
       break;
     }
-    case 4:
-      {
-        if (role.value === 2) {
-          confirmObj.value.status = 6;
-          const res = await updateOrderDetail(confirmObj.value);
-          if (res.code === 200) {
-            uni.showToast({
-              title: '提交成功',
-              icon: 'success',
-            });
-            setTimeout(() => {
-              uni.navigateBack();
-            }, 1000);
-          }
+    case 4: {
+      if (role.value === 2) {
+        confirmObj.value.status = 6;
+        const res = await updateOrderDetail(confirmObj.value);
+        if (res.code === 200) {
+          uni.showToast({
+            title: '提交成功',
+            icon: 'success',
+          });
+          setTimeout(() => {
+            uni.navigateBack();
+          }, 1000);
         }
       }
-      case6: {
-        if (role.value === 1) {
-          confirmObj.value.status = 8;
-          const res = await updateOrderDetail(confirmObj.value);
-          if (res.code === 200) {
-            uni.showToast({
-              title: '提交成功',
-              icon: 'success',
-            });
-            setTimeout(() => {
-              uni.navigateBack();
-            }, 1000);
-          }
+    }
+    case 6: {
+      if (role.value === 1) {
+        confirmObj.value.status = 8;
+        const res = await updateOrderDetail(confirmObj.value);
+        if (res.code === 200) {
+          uni.showToast({
+            title: '提交成功',
+            icon: 'success',
+          });
+          setTimeout(() => {
+            uni.navigateBack();
+          }, 1000);
         }
       }
+    }
   }
 }
 

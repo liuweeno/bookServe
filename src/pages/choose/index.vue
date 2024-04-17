@@ -18,10 +18,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <NavigationBar :showArrow="true" title="选择维修模式" :border="false" background="white"></NavigationBar>
   <div class="choose-container">
-    <div class="mail common-style" @click="goToMail">邮寄维修</div>
-    <div class="visit common-style" @click="goToVisit">上门维修</div>
+    <NavigationBar :showArrow="true" title="选择维修模式" :border="false" background="white"></NavigationBar>
+    <div class="control">
+      <div class="mail common-style" @click="goToMail">邮寄维修</div>
+      <div class="visit common-style" @click="goToVisit">上门维修</div>
+    </div>
   </div>
 </template>
 
@@ -31,13 +33,17 @@ onMounted(() => {
   height: 100vh;
   width: 100vw;
   @include flex-mode(column);
-  gap: 40px;
 
+  .control {
+    flex: 1;
+    @include flex-mode(column, center, center);
+    gap: 40px;
+  }
   .common-style {
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    background-color: #1a96c4;
+    background-color: #7543e2;
     @include flex-mode(center);
     color: white;
   }

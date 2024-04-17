@@ -13,20 +13,23 @@
             >
               <div class="device-title">
                 <div class="prefix" :class="[item.status]"></div>
-                <span class="title">订单编号{{ item.id }}</span>
-                <span class="status busy">{{ item.status }}</span>
+                <span class="title">订单编号{{ item.id }}</span
+                >y
+                <span class="status busy" :class="item.status === 7 || item.status === 8 ? 'offline' : null">{{
+                  item.status === 7 || item.status === 8 ? '已完成' : '进行中'
+                }}</span>
                 <div class="device-list-item-right">
                   <u-icon name="arrow-right"></u-icon>
                 </div>
               </div>
               <div class="device-detail">
                 <div class="icon">
-                  <image :src="item.status"></image>
+                  <image :src="base + item.goods.headPic"></image>
                   <div class="bottom-color" :class="[item.status]"></div>
                 </div>
                 <div class="content">
                   <div>
-                    商品信息：<text class="value">{{ item.goodsName }}</text>
+                    商品信息：<text class="value">{{ item.goods.goodsName }}</text>
                   </div>
                   <div>
                     维修方式：<text class="value">{{ showWay[item.options] }}</text>
@@ -57,9 +60,10 @@
 import { ref, onBeforeMount } from 'vue';
 import NavigationBar from '@/components/NavigationBar.vue';
 import { getAllUserAllOrder, getUserAllOrder } from '@/api/user.ts';
+import { onShow } from '@dcloudio/uni-app';
 
 const showWay = ['寄件维修', '上门维修'];
-
+const base = 'http://114.132.45.214:9091/';
 const loading = ref<boolean>(true);
 const orderList = ref<
   {
@@ -69,6 +73,7 @@ const orderList = ref<
     goodsName: string;
     payment: number;
     imgUrl: string;
+    goods: object;
   }[]
 >([
   {
@@ -78,6 +83,7 @@ const orderList = ref<
     goodsName: '牙具/维修器具',
     payment: 98.0,
     imgUrl: '@/assets/img/home/empty.png',
+    goods: {},
   },
 ]);
 
@@ -103,6 +109,19 @@ function goToOrderDetail(options: number, status: number, orderId: string) {
     });
   }
 }
+
+onShow(() => {
+  loading.value = true;
+  setTimeout(async () => {
+    const role = uni.getStorageSync('role');
+    console.log('role', role);
+    const res = role === 1 ? await getUserAllOrder() : await getAllUserAllOrder();
+    if (res.code === 200) {
+      orderList.value = res.data;
+    }
+    loading.value = false;
+  }, 500);
+});
 </script>
 
 <style scoped lang="scss">
