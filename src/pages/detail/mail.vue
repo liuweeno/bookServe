@@ -4,6 +4,7 @@
     <div class="tips">
       <span class="big-one">{{ modeShow[status].title }}</span
       ><span class="small-one">{{ modeShow[status].littleTitle }}</span>
+      <div v-if="status == 7 || status == 8" class="evaluate" @click="openEvaluate">评价</div>
     </div>
     <div class="tips second-tips">
       <span class="big-one second-big">注意事项</span>
@@ -61,6 +62,9 @@
         </div>
       </div>
     </view>
+    <up-modal @confirm="showEvaluate = false" :show="showEvaluate" title="评价" content="evaluateContent">
+      <up-textarea v-model="evaluateContent" placeholder="请输入内容"></up-textarea
+    ></up-modal>
   </view>
 </template>
 
@@ -70,6 +74,8 @@ import { ref, onBeforeMount } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
 import { getGoodsDetail, getOrderDetail, updateOrderDetail } from '@/api/user';
 
+const evaluateContent = ref('');
+const showEvaluate = ref(false);
 const base = 'http://114.132.45.214:9091/';
 const orderForm = ref({
   name: '',
@@ -103,22 +109,16 @@ const modeShow = {
     title: '下单成功，请填写邮寄单号',
     littleTitle: '下单成功，请填写邮寄单号',
     notice: '1.邮寄设备请提前删除解锁密码，并做好备份处理',
-    buttonMessage: role.value === 1 ? '确认提交' : '等待用户邮寄',
-    canClick: role.value === 1,
   },
   4: {
     title: '物品已邮寄，请等待商家维修',
     littleTitle: '物品已邮寄，请等待商家维修',
     notice: '1.请关注物流动态，及时查看维修进度',
-    buttonMessage: role.value === 2 ? '确认寄回' : '等待商家寄回',
-    canClick: role.value === 2,
   },
   6: {
     title: '商家已寄回，请确认收货付款',
     littleTitle: '商家已寄回，请确认收货付款',
     notice: '1.请确认设备完好后再付款',
-    buttonMessage: role.value === 1 ? '确认收货' : '等待用户确认',
-    canClick: role.value === 1,
   },
   8: {
     title: '订单已完成',
@@ -128,6 +128,10 @@ const modeShow = {
     canClick: false,
   },
 };
+
+function openEvaluate() {
+  showEvaluate.value = true;
+}
 
 async function confirm() {
   switch (Number(status.value)) {
@@ -241,6 +245,7 @@ onLoad(async (options: any) => {
   background-color: #f2f2f5;
 
   .tips {
+    position: relative;
     height: 80px;
     padding: 20px;
     width: 100%;
@@ -256,6 +261,15 @@ onLoad(async (options: any) => {
 
     .small-one {
       font-size: small;
+    }
+
+    .evaluate {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      background-color: #c4469a;
+      padding: 5px 10px;
+      border-radius: 5px;
     }
   }
 

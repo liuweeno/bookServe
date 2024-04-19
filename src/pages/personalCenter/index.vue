@@ -10,10 +10,10 @@
           </div>
           <div class="username-box">
             <div class="username">{{ userInfo.username }}</div>
-            <!--            <div class="edit-btn">-->
-            <!--              编辑个人资料-->
-            <!--              <u-icon name="arrow-right"></u-icon>-->
-            <!--            </div>-->
+            <div class="edit-btn" @click="goToEdit">
+              编辑个人资料
+              <u-icon name="arrow-right"></u-icon>
+            </div>
           </div>
         </div>
         <div class="bg">
@@ -96,6 +96,12 @@ const getAccount = async () => {
 const getAmountInfo = async () => {
   console.log('getAmountInfo');
 };
+
+function goToEdit() {
+  uni.navigateTo({
+    url: '/pages/editInformation/index',
+  });
+}
 
 function goToAllOrder() {
   uni.navigateTo({

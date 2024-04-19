@@ -8,6 +8,20 @@
 	},
 	"pages": [
 		{
+			"path": "pages/editInformation/index",
+			"style": {
+				"navigationBarTitleText": "编辑信息",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/editInformation/editUsername",
+			"style": {
+				"navigationBarTitleText": "编辑信息",
+				"navigationStyle": "custom"
+			}
+		},
+		{
 			"path": "pages/login/index",
 			"style": {
 				"navigationBarTitleText": "uni-app",

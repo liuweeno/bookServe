@@ -29,6 +29,7 @@
       </u-grid>
       <u-toast ref="uToastRef" />
     </view>
+    <up-calendar :show="showCalendar" @close="closeCalendar" @close-on-click-overlay="closeCalendar"></up-calendar>
   </view>
 </template>
 
@@ -37,6 +38,7 @@ import { reactive, ref, onMounted } from 'vue';
 import NavigationBar from '@/components/NavigationBar.vue';
 import { getCommodity } from '@/api/user.ts';
 
+const showCalendar = ref(false);
 const base = 'http://114.132.45.214:9091/';
 const commodityList = ref([]);
 const uToastRef = ref(null);
@@ -77,6 +79,9 @@ const baseList = ref([
 function change(index) {}
 function click(index) {
   console.log('click', index);
+  if (index === 2) {
+    showCalendar.value = true;
+  }
 }
 
 function goToDetail(id) {
@@ -93,6 +98,10 @@ onMounted(async () => {
   }
   commodityList.value = res.data.records;
 });
+
+function closeCalendar() {
+  showCalendar.value = false;
+}
 </script>
 
 <style lang="scss">
