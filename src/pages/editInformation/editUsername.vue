@@ -25,6 +25,8 @@ import { ref } from 'vue';
 import { setUserInformation, showMessage } from '@/utils/common';
 
 const username = ref<string>('');
+
+function changeNickName() {}
 </script>
 
 <style lang="scss">

@@ -40,6 +40,10 @@ export function getAllUserAllOrder(data: {}) {
   return $http.get('/orders/findAll', data);
 }
 
-export function addVisitOrder(data: {}) {
-  return $http.post('/orders/addDoor', data);
+export function addEvaluateApi(data: {}) {
+  return $http.post('/comment/add', data);
+}
+
+export function getEvaluateApi(data: {}) {
+  return $http.get('/comment/findAllCommentByOId', data);
 }

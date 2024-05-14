@@ -4,6 +4,13 @@
     <div class="tips">
       <span class="big-one">{{ modeShow[status].title }}</span
       ><span class="small-one">{{ modeShow[status].littleTitle }}</span>
+      <div
+        v-if="status == 7 || status == 8"
+        :class="confirmObj.evaluate.length === 0 ? 'evaluate' : 'evaluate-yes'"
+        @click="openEvaluate"
+      >
+        评价
+      </div>
     </div>
     <div class="tips second-tips">
       <span class="big-one second-big">注意事项</span>
@@ -30,6 +37,9 @@
         <u-form-item label="上门时间:" borderBottom>
           <u--input disabled v-model="confirmObj.goTime" border="none"></u--input>
         </u-form-item>
+        <u-form-item label="用户评价: " :borderBottom="true" prop="userInfo.shippingCode" borderBottom ref="item1">
+          <up-textarea disabled="true" v-for="item in confirmObj.evaluate" v-model="item.content"></up-textarea>
+        </u-form-item>
       </u-form>
       <div class="commodity-detail">
         <img :src="base + confirmObj.goods.headPic" alt="" />
@@ -53,15 +63,24 @@
         <div :class="canClick ? 'confirm-btn' : 'no-confirm'" @click="confirm">{{ buttonMessage }}</div>
       </div>
     </view>
+    <up-modal
+      @confirm="addEvaluate"
+      :closeOnClickOverlay="true"
+      @close="closeShowEvaluate"
+      :show="showEvaluate"
+      title="评价"
+      content="evaluateContent"
+    >
+      <up-textarea v-model="evaluateContent" placeholder="请输入内容"></up-textarea
+    ></up-modal>
   </view>
 </template>
 
 <script setup lang="ts">
 import NavigationBar from '@/components/NavigationBar.vue';
-import { onBeforeMount, ref } from 'vue';
+import { ref } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
-import { getGoodsDetail, getOrderDetail, updateOrderDetail } from '@/api/user';
-import { formatTimestampCommon } from '@/utils/common';
+import { addEvaluateApi, getEvaluateApi, getOrderDetail, updateOrderDetail } from '@/api/user';
 
 const base = 'http://114.132.45.214:9091/';
 const orderForm = ref({
@@ -80,6 +99,7 @@ const orderDetail = ref<{
   goodsName: string;
   goodsDesc: string;
   goodsPic: string;
+  evaluate: string;
 }>({
   payment: 0,
   orderId: '',
@@ -87,6 +107,7 @@ const orderDetail = ref<{
   goodsName: '',
   goodsDesc: '',
   goodsPic: '',
+  evaluate: '',
 });
 const confirmObj = ref({});
 const buttonMessage = ref<string>('');
@@ -115,6 +136,26 @@ const modeShow = {
   },
 };
 
+const evaluateContent = ref('');
+const showEvaluate = ref(false);
+function openEvaluate() {
+  showEvaluate.value = true;
+}
+
+function closeShowEvaluate() {
+  showEvaluate.value = false;
+}
+async function addEvaluate() {
+  const res = await addEvaluateApi({ orderId: id.value, content: evaluateContent.value });
+  if (res.code === 200) {
+    uni.showToast({
+      title: '评价成功',
+      icon: 'success',
+    });
+    showEvaluate.value = false;
+  }
+}
+
 onLoad(async (options: any) => {
   role.value = uni.getStorageSync('role');
   status.value = options.orderStatus;
@@ -139,7 +180,9 @@ onLoad(async (options: any) => {
   }
   const res = await getOrderDetail({ id: id.value });
   if (res.code === 200) {
+    const evaluateArray = await getEvaluateApi({ oid: id.value });
     confirmObj.value = res.data;
+    confirmObj.value.evaluate = evaluateArray.data;
   }
 });
 
@@ -205,6 +248,7 @@ async function confirm() {
   background-color: #f2f2f5;
 
   .tips {
+    position: relative;
     height: 80px;
     padding: 20px;
     width: 100%;
@@ -220,6 +264,24 @@ async function confirm() {
 
     .small-one {
       font-size: small;
+    }
+
+    .evaluate {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      background-color: #c4469a;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+
+    .evaluate-yes {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      background-color: #3c3c3c;
+      padding: 5px 10px;
+      border-radius: 5px;
     }
   }
 
